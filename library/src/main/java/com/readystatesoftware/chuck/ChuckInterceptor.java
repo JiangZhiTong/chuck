@@ -164,14 +164,18 @@ public final class ChuckInterceptor implements Interceptor {
             }
         }
 
-        Uri transactionUri = create(transaction);
+        Uri transactionUri;
 
         long startNs = System.nanoTime();
         Response response;
         try {
             response = chain.proceed(request);
+            // 设置响应的域名
+            transaction.setUrl(response.request().url().toString());
+            transactionUri = create(transaction);
         } catch (Exception e) {
             transaction.setError(e.toString());
+            transactionUri = create(transaction);
             update(transaction, transactionUri);
             throw e;
         }
