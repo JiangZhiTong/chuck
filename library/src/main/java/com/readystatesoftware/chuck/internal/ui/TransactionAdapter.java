@@ -73,14 +73,21 @@ class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.ViewHol
             public void bindView(View view, final Context context, Cursor cursor) {
                 final HttpTransaction transaction = LocalCupboard.getInstance().withCursor(cursor).get(HttpTransaction.class);
                 final ViewHolder holder = (ViewHolder) view.getTag();
-                if(!TextUtils.isEmpty(transaction.getPath())&&transaction.getPath().contains("eventType")){
+                if (!TextUtils.isEmpty(transaction.getPath()) && transaction.getPath().contains("eventType")) {
                     try {
-                        JSONObject jsonObject=new JSONObject(FormatUtils.getUrlParameterJson(transaction.getPath()));
-                        holder.path.setText(jsonObject.getString("eventType"));
+                        JSONObject jsonObject = new JSONObject(FormatUtils.getUrlParameterJson(transaction.getPath()));
+                        StringBuilder stringBuilder = new StringBuilder();
+                        stringBuilder.append("EventType:")
+                                .append(jsonObject.getString("eventType"))
+                                .append("\n")
+                                .append("ColumnType:")
+                                .append(jsonObject.getString("columnType"));
+
+                        holder.path.setText(stringBuilder.toString());
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-                }else{
+                } else {
                     holder.path.setText(transaction.getMethod() + " " + transaction.getPath());
                 }
                 holder.host.setText(transaction.getHost());
