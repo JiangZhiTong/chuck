@@ -47,6 +47,7 @@ public class TransactionListFragment extends Fragment implements
     private String currentFilter;
     private OnListFragmentInteractionListener listener;
     private TransactionAdapter adapter;
+    private boolean isBuryingPoint=false;//是否埋点
 
     public TransactionListFragment() {}
 
@@ -118,6 +119,15 @@ public class TransactionListFragment extends Fragment implements
         } else if (item.getItemId() == R.id.browse_sql) {
             SQLiteUtils.browseDatabase(getContext());
             return true;
+        } else if(item.getItemId()==R.id.buryingPoint){
+            if (!isBuryingPoint){
+                currentFilter ="eventType";
+            }else{
+                currentFilter ="";
+            }
+            isBuryingPoint=!isBuryingPoint;
+            getLoaderManager().restartLoader(0, null, this);
+           return true;
         } else {
             return super.onOptionsItemSelected(item);
         }

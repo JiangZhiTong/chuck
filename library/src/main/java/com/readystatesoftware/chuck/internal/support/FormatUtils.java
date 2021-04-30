@@ -143,4 +143,18 @@ public class FormatUtils {
     private static String v(String string) {
         return (string != null) ? string : "";
     }
+    /**
+     * 获取URL里面的参数解析成json
+     * @param path
+     * @return
+     */
+    public static String getUrlParameterJson(String path){
+        int indexNum = path.indexOf("?");
+        String parameterJson = "";
+        if (indexNum != -1 && path.contains("=")) {
+            parameterJson = path.substring(indexNum + 1, path.length()).replace("&", "\",\"").replace("=", "\":\"");
+            parameterJson = String.format("{\"%s\"}", parameterJson);
+        }
+        return parameterJson;
+    }
 }

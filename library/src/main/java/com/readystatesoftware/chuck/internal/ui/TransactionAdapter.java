@@ -20,6 +20,7 @@ import android.database.Cursor;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.CursorAdapter;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,7 +30,12 @@ import android.widget.TextView;
 import com.readystatesoftware.chuck.R;
 import com.readystatesoftware.chuck.internal.data.HttpTransaction;
 import com.readystatesoftware.chuck.internal.data.LocalCupboard;
+import com.readystatesoftware.chuck.internal.support.FormatUtils;
+import com.readystatesoftware.chuck.internal.support.JsonConvertor;
 import com.readystatesoftware.chuck.internal.ui.TransactionListFragment.OnListFragmentInteractionListener;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.ViewHolder> {
 
@@ -67,7 +73,16 @@ class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.ViewHol
             public void bindView(View view, final Context context, Cursor cursor) {
                 final HttpTransaction transaction = LocalCupboard.getInstance().withCursor(cursor).get(HttpTransaction.class);
                 final ViewHolder holder = (ViewHolder) view.getTag();
-                holder.path.setText(transaction.getMethod() + " " + transaction.getPath());
+                if(!TextUtils.isEmpty(transaction.getPath())&&transaction.getPath().contains("eventType")){
+                    try {
+                        JSONObject jsonObject=new JSONObject(FormatUtils.getUrlParameterJson(transaction.getPath()));
+                        holder.path.setText(jsonObject.getString("eventType"));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }else{
+                    holder.path.setText(transaction.getMethod() + " " + transaction.getPath());
+                }
                 holder.host.setText(transaction.getHost());
                 holder.start.setText(transaction.getRequestStartTimeString());
                 holder.ssl.setVisibility(transaction.isSsl() ? View.VISIBLE : View.GONE);
