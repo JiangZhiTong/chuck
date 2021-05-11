@@ -81,7 +81,7 @@ class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.ViewHol
                                 .append(jsonObject.getString("eventType"))
                                 .append("\n")
                                 .append("ColumnType:")
-                                .append(jsonObject.getString("columnType"));
+                                .append(jsonObject.has("columnType")?jsonObject.getString("columnType"):"NULL");
 
                         holder.path.setText(stringBuilder.toString());
                     } catch (JSONException e) {
